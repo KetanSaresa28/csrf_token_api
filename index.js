@@ -28,13 +28,13 @@ app.use(function (req, res, next) {
 /* Add CSRF Middleware */
 app.use(cookieParser());
 const csrf = require('csurf');
-const csrfProtection = csrf({ cookie: { maxAge: 60 * 60, httpOnly: true, sameSite : 'none', secure : true } }); // expire after 30 days
+const csrfProtection = csrf({ cookie: { maxAge: 60 * 60, path: "/", httpOnly: true, sameSite: 'none', secure: true } }); // expire after 30 days
 
 
 /* Send CSRF token */
 app.get('/api/csrf/token', csrfProtection, (req, res) => {
   res.cookie('mobile_csrf', req.csrfToken());
-  return res.json({ success: true, code: 200, data: { csrfToken: req.csrfToken() }, cookies : req.cookies,  });
+  return res.json({ success: true, code: 200, data: { csrfToken: req.csrfToken() }, cookies: req.cookies, });
 });
 
 app.post('/api/submit', csrfProtection, (req, res) => {
@@ -57,7 +57,7 @@ app.use(function (err, req, res, next) {
     });
     return res.status(403).send({
       msg: '403: Invalid CSRF Token!',
-      obj: { body: req.body, headers: req.headers, url : req.originalUrl }
+      obj: { body: req.body, headers: req.headers, url: req.originalUrl }
     });
   } else {
     res.status(500).send({
