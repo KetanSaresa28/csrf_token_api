@@ -33,7 +33,7 @@ const csrfProtection = csrf({ cookie: { maxAge: 60 * 60, path: "/", httpOnly: tr
 
 /* Send CSRF token */
 app.get('/api/csrf/token', csrfProtection, (req, res) => {
-  res.cookie('mobile_csrf', req.csrfToken());
+  res.cookie('mobile_csrf', req.csrfToken(), { expires: 60 * 60, path: "/", httpOnly: true, sameSite: 'none', secure: true });
   return res.json({ success: true, code: 200, data: { csrfToken: req.csrfToken() }, cookies: req.cookies, });
 });
 
