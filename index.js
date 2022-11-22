@@ -28,12 +28,13 @@ app.use(function (req, res, next) {
 /* Add CSRF Middleware */
 app.use(cookieParser());
 const csrf = require('csurf');
-const csrfProtection = csrf({ cookie: { maxAge: 60 * 60, sameSite : 'none', secure : true } }); // expire after 30 days
+const csrfProtection = csrf({ cookie: { maxAge: 60 * 60, httpOnly: true, sameSite : 'none', secure : true } }); // expire after 30 days
 
 
 /* Send CSRF token */
 app.get('/api/csrf/token', csrfProtection, (req, res) => {
-  return res.json({ success: true, code: 200, data: { csrfToken: req.csrfToken() } });
+  res.cookie('mobile_csrf', req.csrfToken());
+  return res.json({ success: true, code: 200, data: { csrfToken: req.csrfToken() }, cookies : req.cookies,  });
 });
 
 app.post('/api/submit', csrfProtection, (req, res) => {
